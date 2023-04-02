@@ -2,8 +2,10 @@ import React from "react";
 import { StyleSheet, View, FlatList } from "react-native";
 import NearShopItem from "./NearShopItem";
 
-export default function NearShopsList({ items }) {
-  const renderItem = ({ item }) => <NearShopItem item={item} />;
+export default function NearShopsList({ items, distance }) {
+  const renderItem = ({ item }) => (
+    <NearShopItem item={item} distance={distance} />
+  );
 
   return (
     <View>

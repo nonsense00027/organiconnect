@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { sortByDistance } from "sort-by-distance";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
+import DropDownPicker from "react-native-dropdown-picker";
 
 import { db } from "../../../configs/firebase/firebase";
 
@@ -16,6 +17,14 @@ export default function NearMe() {
   const [loading, setLoading] = useState(true);
 
   const [shops, setShops] = useState([]);
+
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(5);
+  const [items, setItems] = useState([
+    { label: "within 5km away", value: 5 },
+    { label: "within 10km away", value: 10 },
+    { label: "within 20km away", value: 20 },
+  ]);
 
   async function getLocation() {
     const result = await Location.getCurrentPositionAsync({
@@ -59,7 +68,16 @@ export default function NearMe() {
   function radiansToKilometers(distanceInRadians) {
     const earthRadiusInKm = 6371; // Earth's mean radius in kilometers
     const distanceInKm = distanceInRadians * earthRadiusInKm;
-    return distanceInKm;
+    return convertDistance(distanceInKm);
+  }
+
+  function convertDistance(distance) {
+    if (distance >= 1) {
+      return { value: distance.toFixed(2), label: "km", default: distance };
+    } else {
+      const meters = distance * 1000;
+      return { value: meters.toFixed(2), label: "m", default: distance };
+    }
   }
 
   const getNearbyShops = () => {
@@ -69,8 +87,12 @@ export default function NearMe() {
       ...item,
       distance: radiansToKilometers(item.distance),
     }));
-    return result;
+
+    const final = result.filter((item) => item.distance.default < value);
+    return final;
   };
+
+  console.log(value);
 
   if (loading) {
     return (
@@ -82,7 +104,18 @@ export default function NearMe() {
 
   return (
     <View style={styles.nearMe}>
-      <NearShopsList items={getNearbyShops()} />
+      <Text className="text-md font-semibold mb-1">Select distance:</Text>
+      <View className="mb-2">
+        <DropDownPicker
+          open={open}
+          value={value}
+          items={items}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setItems}
+        />
+      </View>
+      <NearShopsList items={getNearbyShops()} distance={value} />
     </View>
   );
 }

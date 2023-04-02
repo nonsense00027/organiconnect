@@ -13,7 +13,7 @@ import Colors from "../../../../shared/theme/Colors";
 const defaultAvatar =
   "https://img.freepik.com/premium-vector/online-shop-logo-designs-concept-vector-online-store-logo-designs_7649-661.jpg?w=2000";
 
-export default function NearShopItem({ item }) {
+export default function NearShopItem({ item, distance }) {
   const navigation = useNavigation();
 
   const handleSelectShop = () => {
@@ -42,7 +42,8 @@ export default function NearShopItem({ item }) {
       <View>
         <Text style={styles.nearShopItem__name}>{item.storeName}</Text>
         <Text style={styles.nearShopItem__distance}>
-          {convertDistance(item.distance)} away
+          {/* {convertDistance(item.distance)} away  */}
+          {item.distance.value} {item.distance.label}
         </Text>
       </View>
     </TouchableOpacity>

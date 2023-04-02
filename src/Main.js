@@ -7,10 +7,15 @@ import LoadingScreen from "./components/LoadingScreen";
 
 import { AuthRoute } from "./routes/AuthRoute";
 import { HomeRoute } from "./routes/HomeRoute";
+import { CartContextProvider } from "./context/CartContext";
 
 const getScreen = (user) => {
   if (user) {
-    return <HomeRoute />;
+    return (
+      <CartContextProvider>
+        <HomeRoute />
+      </CartContextProvider>
+    );
   } else {
     return <AuthRoute />;
   }
